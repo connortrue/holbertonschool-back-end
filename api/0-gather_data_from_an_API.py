@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Requests the user information from a given API """
 import requests
+import sys
 
 
 def display_employee_progress(employee_id):
@@ -9,13 +10,9 @@ def display_employee_progress(employee_id):
     empu = f"{url}/users/{employee_id}"
     todo = f"{url}/todos"
 
-    try:
-        emps = requests.get(empu).json()
-        todos = requests.get(todo,
-                             params={"userId": employee_id}).json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-        return
+    emps = requests.get(empu).json()
+    todos = requests.get(todo,
+                         params={"userId": employee_id}).json()
 
     name = emps.get("name")
     if name is None:
@@ -32,6 +29,4 @@ def display_employee_progress(employee_id):
 
 
 if __name__ == "__main__":
-    import sys
-
     display_employee_progress(int(sys.argv[1]))
