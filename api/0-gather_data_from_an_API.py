@@ -3,17 +3,24 @@
 import requests
 import sys
 
+users_url = "https://jsonplaceholder.typicode.com/users"
+todos_url = "https://jsonplaceholder.typicode.com/todos"
+
 
 def todo_list_progress(employee_id):
-    base_url = 'https://jsonplaceholder.typicode.com'
-    user = requests.get('{}/users/{}'.format(base_url, employee_id)).json()
-    todos = requests.get('{}/todos?userId={}'
-                         .format(base_url, employee_id)).json()
-    done_tasks = [task for task in todos if task.get('completed') is True]
-    total_tasks = len(todos)
+    users = requests.get(users_url).json()
+    todos = requests.get(todos_url).json()
+
+    user = next((user for user in users if user['id'] == employee_id), None)
+    if not user:
+        print("User not found")
+        return
+
+    user_todos = [todo for todo in todos if todo['userId'] == employee_id]
+    done_tasks = [todo for todo in user_todos if todo['completed']]
 
     print("Employee {} is done with tasks({}/{}):"
-          .format(user['name'], len(done_tasks), total_tasks))
+          .format(user['name'], len(done_tasks), len(user_todos)))
 
     for task in done_tasks:
         print("\t {}".format(task['title']))
